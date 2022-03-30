@@ -18,7 +18,7 @@ int	main(int argc, char **argv)
 		return 1;
 
 	}
-	if (pid == 0)
+	if (pid != 0)
 		wait(0);
 	else
 	{
