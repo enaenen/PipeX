@@ -6,7 +6,7 @@
 /*   By: wchae <wchae@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 17:29:15 by wchae             #+#    #+#             */
-/*   Updated: 2022/04/03 21:29:12 by wchae            ###   ########.fr       */
+/*   Updated: 2022/04/03 21:48:56 by wchae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 {
-	size_t needle_len;
+	size_t	needle_len;
 
 	if (!*needle)
 		return ((char *)haystack);

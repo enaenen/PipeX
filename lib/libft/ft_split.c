@@ -6,7 +6,7 @@
 /*   By: wchae <wchae@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 16:55:39 by wchae             #+#    #+#             */
-/*   Updated: 2022/04/03 17:26:42 by wchae            ###   ########.fr       */
+/*   Updated: 2022/04/03 21:49:27 by wchae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static int	is_alloc_failed(char ***ret, int len)
 	return (error);
 }
 
-char		**ft_split(const char *s, char c)
+char	**ft_split(const char *s, char c)
 {
 	int		i;
 	int		j;
