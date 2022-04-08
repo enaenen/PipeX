@@ -5,6 +5,8 @@
 
 int main(int argc, char **argv)
 {
-	execv(argv[1], argv + 1);
+	printf("execute is\n");
+	execl("/bin/ls", "ls","-al",NULL);
+	printf("here-====================");
 	return 0;
 }

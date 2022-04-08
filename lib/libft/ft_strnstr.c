@@ -6,7 +6,7 @@
 /*   By: wchae <wchae@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 17:29:15 by wchae             #+#    #+#             */
-/*   Updated: 2022/04/03 21:48:56 by wchae            ###   ########.fr       */
+/*   Updated: 2022/04/08 13:25:38 by wchae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,24 @@
 
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 {
-	size_t	needle_len;
+	size_t	i;
+	size_t	j;
+	char	*ptr;
 
-	if (!*needle)
-		return ((char *)haystack);
-	needle_len = ft_strlen(needle);
-	while (*haystack && len-- >= needle_len)
+	ptr = (char *)haystack;
+	i = 0;
+	if (needle[0] == '\0')
+		return (ptr);
+	while (ptr[i] && i < len)
 	{
-		if (*haystack == *needle && !ft_memcmp(haystack, needle, needle_len))
-			return ((char *)haystack);
-		haystack++;
+		j = 0;
+		while (ptr[i + j] != '\0' && ptr[i + j] == needle[j] && (i + j) < len)
+		{
+			if (needle[j + 1] == '\0')
+				return (ptr + i);
+			j++;
+		}
+		i++;
 	}
-	return (NULL);
+	return (0);
 }

@@ -6,13 +6,39 @@
 /*   By: wchae <wchae@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/03 16:55:39 by wchae             #+#    #+#             */
-/*   Updated: 2022/04/03 21:49:27 by wchae            ###   ########.fr       */
+/*   Updated: 2022/04/08 13:32:07 by wchae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	word_cnt(const char *s, char c)
+static int	alloc_check(char ***ret, int ret_len)
+{
+	int	i;
+	int	err;
+
+	i = 0;
+	err = 0;
+	while (i < ret_len)
+	{
+		if ((*ret)[i] == NULL)
+			err = 1;
+		i++;
+	}
+	if (!err)
+		return (err);
+	i = 0;
+	while (i < ret_len)
+	{
+		if ((*ret)[i] != NULL)
+			free((*ret)[i]);
+		i++;
+	}
+	free(*ret);
+	return (err);
+}
+
+static int	word_cnt(char const *s, char c)
 {
 	int	i;
 	int	j;
@@ -26,43 +52,17 @@ static int	word_cnt(const char *s, char c)
 		while (s[i] != c && s[i])
 			i++;
 		if (i - j > 0)
-			len ++;
+			len++;
 		else
 			i++;
 	}
 	return (len);
 }
 
-static void	find_word(const char *s, char c, int *i)
+static void	ret_word_cnt(const char *s, char c, int *i)
 {
-	while (s[*i] && s[*i] != c)
+	while (s[*i] != c && s[*i])
 		(*i)++;
-}
-
-static int	is_alloc_failed(char ***ret, int len)
-{
-	int	i;
-	int	error;
-
-	i = 0;
-	error = 0;
-	while (i < len)
-	{
-		if ((*ret)[i] == NULL)
-			error = 1;
-		i++;
-	}
-	if (!error)
-		return (error);
-	i = 0;
-	while (i < len)
-	{
-		if ((*ret)[i] != NULL)
-			free((*ret)[i]);
-		i++;
-	}
-	free(*ret);
-	return (error);
 }
 
 char	**ft_split(const char *s, char c)
@@ -82,14 +82,14 @@ char	**ft_split(const char *s, char c)
 	while (s[i])
 	{
 		j = i;
-		find_word(s, c, &i);
+		ret_word_cnt(s, c, &i);
 		if (i - j > 0)
-			ret[k++] = ft_strndup(s + i, i - j);
+			ret[k++] = ft_strndup(s + j, i - j);
 		else
 			i++;
 	}
 	ret[k] = NULL;
-	if (is_alloc_failed(&ret, k))
+	if (alloc_check(&ret, k))
 		return (NULL);
 	return (ret);
 }

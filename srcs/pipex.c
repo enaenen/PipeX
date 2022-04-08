@@ -6,7 +6,7 @@
 /*   By: wchae <wchae@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/27 00:13:03 by wchae             #+#    #+#             */
-/*   Updated: 2022/03/30 10:40:11 by wchae            ###   ########.fr       */
+/*   Updated: 2022/04/08 15:29:37 by wchae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,69 +14,59 @@
 
 void	error_handle(void)
 {
-	perror("Error: ");
-	exit(EXIT_FAILURE);
+	ft_putstr_fd("Error\n", 2);
+	ft_putstr_fd("Use ./pipex file1 cmd1 cmd2 file2\n", 1);
+	exit(0);
 }
 
-void	child_process(char **argv, char **envp, int *fds)
+void	child_process(char **argv, char **envp, int *pipe_fd)
 {
-	int fd;
-	fd = open_file(argv[1], 2);
-	dup2(fds[WRITE_END], STDOUT_FILENO);
-	close(fds[WRITE_END]);
-	dup2(fd, STDIN_FILENO);
-	close(fds[READ_END]);
-	close(fd);
-	execute(argv[2], envp);
+	int	file_in;
+
+	file_in = open(argv[1], O_RDONLY | O_CLOEXEC, 0777);
+	if (file_in == -1)
+		error();
+	dup2(pipe_fd[WRITE_END], STDOUT_FILENO);
+	close(pipe_fd[WRITE_END]);
+	dup2(file_in, STDIN_FILENO);
+	close(pipe_fd[READ_END]);
+	close(file_in);
+	execute_command(argv[2], envp);
 }
 
-int		open_file(char *argv, int i)
+void	parent_process(char **argv, char **envp, int *pipe_fd)
 {
-	int	fd;
+	int		file_out;
 
-	fd = 0;
-	if (i == 0)
-		fd = open(argv, O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0777);
-	else if (i == 1)
-		fd = open(argv, O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0777);
-	else if (i == 2)
-		fd = open (argv, O_RDONLY | O_CLOEXEC, 0777);
-	if (fd == -1)
-		error_handle();
-	return (fd);
+	file_out = open(argv[4], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0777);
+	if (file_out == -1)
+		error();
+	dup2(pipe_fd[READ_END], STDIN_FILENO);
+	close(pipe_fd[READ_END]);
+	dup2(file_out, STDOUT_FILENO);
+	close(pipe_fd[WRITE_END]);
+	close(file_out);
+	execute_command(argv[3], envp);
 }
 
-void	parent_process(char **argv, char **envp, int *fds)
+int	main(int argc, char **argv, char **envp)
 {
-	int		fileout;
-	
-	fileout = open_file(argv[4], 1);
-	dup2(fds[READ_END], STDIN_FILENO);
-	close(fds[READ_END]);
-	dup2(fileout, STDOUT_FILENO);
-	close(fds[WRITE_END]);
-	close(fileout);
-	execute(argv[3], envp);
-}
-
-int		main(int argc, char **argv, char **envp)
-{
-	int	fds[2];
-	int	pid;
+	int		pipe_fd[2];
+	pid_t	pid;
 
 	if (argc == 5)
 	{
-		if (pipe(fds) == -1)
-			error_handle();
+		if (pipe(pipe_fd) == -1)
+			error();
 		pid = fork();
 		if (pid == -1)
-			error_handle();
+			error();
 		if (pid == 0)
-			child_process(argv, envp, fds);
+			child_process(argv, envp, pipe_fd);
 		waitpid(pid, NULL, 0);
-		parent_process(argv, envp, fds);
+		parent_process(argv, envp, pipe_fd);
 	}
 	else
-		arg_error(0);
+		error_handle();
 	return (0);
 }
