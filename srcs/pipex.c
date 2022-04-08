@@ -6,7 +6,7 @@
 /*   By: wchae <wchae@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/27 00:13:03 by wchae             #+#    #+#             */
-/*   Updated: 2022/04/08 15:29:37 by wchae            ###   ########.fr       */
+/*   Updated: 2022/04/08 15:36:51 by wchae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	parent_process(char **argv, char **envp, int *pipe_fd)
 {
 	int		file_out;
 
-	file_out = open(argv[4], O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0777);
+	file_out = open(argv[4], O_WRONLY | O_CREAT | O_CLOEXEC, 0777);
 	if (file_out == -1)
 		error();
 	dup2(pipe_fd[READ_END], STDIN_FILENO);
